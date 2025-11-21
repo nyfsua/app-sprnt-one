@@ -21,7 +21,7 @@ export default function App() {
             <div className="leading-none">
               <h1 className="text-5xl font-semibold">One</h1>
               <h2 className="text-3xl font-semibold text-[#B74735] mt-2">
-                Core i2 v1.4
+                Core s1 v1.4
               </h2>
             </div>
             <p className="text-xs text-white/60 leading-tight">
