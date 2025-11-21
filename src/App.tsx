@@ -15,9 +15,18 @@ export default function App() {
           <Starfield />
         </div>
 
-        <div className="relative z-10 h-full grid grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)_minmax(0,1fr)] px-10 py-8 gap-8 items-center">
+        {/* MOBILE: flex at bottom, DESKTOP: 3-column grid */}
+        <div
+          className="
+            relative z-10 h-full
+            flex flex-col justify-end items-center gap-10
+            px-6 md:px-10 py-8
+            md:grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)_minmax(0,1fr)]
+            md:items-center md:gap-8
+          "
+        >
           {/* LEFT PANEL */}
-          <section className="space-y-5 max-w-sm">
+          <section className="space-y-5 max-w-sm text-center md:text-left">
             <div className="leading-none">
               <h1 className="text-5xl font-semibold">One</h1>
               <h2 className="text-3xl font-semibold text-[#B74735] mt-2">
@@ -30,13 +39,21 @@ export default function App() {
             </p>
             <p className="text-xs">
               Status:{" "}
-              <span className="text-[#629B80] font-semibold">COGNIZANT, LISTENING</span>
+              <span className="text-[#629B80] font-semibold">
+                COGNISANT, LISTENING
+              </span>
             </p>
           </section>
 
           {/* CENTER PANEL – 3D */}
           <section className="flex justify-center items-center">
-            <div className="relative w-full max-w-xl aspect-square">
+            <div className="relative 
+    w-[80vw]
+    max-w-xl
+    aspect-square
+    md:w-full
+    scale-[1.05]
+    md:scale-100">
               <div className="absolute inset-0 rounded-full border border-white/10">
                 <div className="absolute inset-6 border border-white/5 rounded-full" />
               </div>
@@ -67,7 +84,7 @@ export default function App() {
           </section>
 
           {/* RIGHT PANEL */}
-          <section className="flex flex-col gap-6 text-right text-xs font-pp tracking-tight">
+          <section className="flex flex-col gap-6 text-center md:text-right text-xs font-pp tracking-tight">
             <Metric label="PROCESSING LOAD" value="94.2%" />
             <Metric label="SYNAPTIC FIRING RATE" value="402 THz" />
             <Metric label="ACTIVE THOUGHTS" value="8.2M" />
@@ -162,9 +179,7 @@ function NavLink({
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
-      <div className="text-[10px] tracking-[0.22em] text-white/40">
-        {label}
-      </div>
+      <div className="text-[10px] tracking-[0.22em] text-white/40">{label}</div>
       <div className="text-xl">{value}</div>
     </div>
   );
@@ -174,7 +189,6 @@ function Metric({ label, value }: { label: string; value: string }) {
 
 function OuterSphere() {
   const ref = useRef<THREE.Mesh>(null!);
-
   useFrame((state) => {
     ref.current.rotation.y = state.clock.getElapsedTime() * 0.15;
   });
@@ -221,21 +235,14 @@ function CoreBlob() {
   });
 
   const material = new THREE.MeshStandardMaterial({
-  metalness: 0.25,
-  roughness: 0.15,
-
-  // main colour tint
-  color: new THREE.Color("#B74838"),
-
-  // glowing core that matches brand
-  emissive: new THREE.Color("#C85F40"),
-  emissiveIntensity: 0.55,
-
-  // transparency
-  transparent: true,
-  opacity: 0.2,  // tweak between 0.5–0.75 for best look
-});
-
+    metalness: 0.25,
+    roughness: 0.15,
+    color: new THREE.Color("#B74838"),
+    emissive: new THREE.Color("#C85F40"),
+    emissiveIntensity: 0.55,
+    transparent: true,
+    opacity: 0.2,
+  });
 
   return (
     <mesh ref={ref} material={material}>
