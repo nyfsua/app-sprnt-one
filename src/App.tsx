@@ -47,23 +47,15 @@ export default function App() {
 
           {/* CENTER PANEL – 3D */}
           <section className="flex justify-center items-center">
-            <div className="relative 
-    w-[80vw]
-    max-w-xl
-    aspect-square
-    md:w-full
-    scale-[1.05]
-    md:scale-100">
-              <div className="absolute inset-0 rounded-full border border-white/10">
-                <div className="absolute inset-6 border border-white/5 rounded-full" />
-              </div>
+            <div className="relative w-[80vw] max-w-xl aspect-square md:w-full scale-[1.05] md:scale-100">
+             
 
               <Canvas
                 camera={{ position: [0, 0, 4.2], fov: 45 }}
                 className="rounded-full"
               >
                 <Suspense fallback={null}>
-                  <color attach="background" args={["#0A0A0C"]} />
+                  <color attach="background" args={["#000000"]} />
                   <ambientLight intensity={0.4} />
                   <directionalLight
                     position={[2, 2, 3]}
@@ -71,7 +63,7 @@ export default function App() {
                     color={new THREE.Color("#B74735")}
                   />
                   <directionalLight position={[-3, -2, -4]} intensity={0.5} />
-                  <OuterSphere />
+                 
                   <CoreBlob />
                   <OrbitControls
                     enableZoom={false}
@@ -187,19 +179,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 
 /* ---------------- 3D ELEMENTS ---------------- */
 
-function OuterSphere() {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame((state) => {
-    ref.current.rotation.y = state.clock.getElapsedTime() * 0.15;
-  });
 
-  return (
-    <mesh ref={ref}>
-      <sphereGeometry args={[1.9, 32, 32]} />
-      <meshBasicMaterial wireframe transparent opacity={0.2} />
-    </mesh>
-  );
-}
 
 function CoreBlob() {
   const ref = useRef<THREE.Mesh>(null!);
