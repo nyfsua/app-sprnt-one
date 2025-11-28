@@ -1,116 +1,142 @@
-// src/App.tsx
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { ProtocolShell } from "./features/protocol";
+
+type SectionId = "INTERFACE" | "NEURAL NET" | "PROTOCOL" | "LOGS";
 
 export default function App() {
+  const [activeSection, setActiveSection] = useState<SectionId>("INTERFACE");
+
+  let content;
+  switch (activeSection) {
+    case "PROTOCOL":
+      content = <ProtocolShell />;
+      break;
+
+    case "NEURAL NET":
+    case "LOGS":
+    case "INTERFACE":
+    default:
+      content = <InterfaceLayout />;
+      break;
+  }
+
   return (
     <div className="min-h-screen bg-black text-sprntText flex flex-col">
-      <Nav />
-
-      <main className="relative flex-1 overflow-hidden">
-        {/* Starfield */}
-        <div className="pointer-events-none absolute inset-0 opacity-40">
-          <Starfield />
-        </div>
-
-        {/* MOBILE: flex at bottom, DESKTOP: 3-column grid */}
-        <div
-          className="
-            relative z-10 h-full
-            flex flex-col justify-end items-center gap-10
-            px-6 md:px-10 py-8
-            md:grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)_minmax(0,1fr)]
-            md:items-center md:gap-8
-          "
-        >
-          {/* LEFT PANEL */}
-          <section className="space-y-5 max-w-sm text-center md:text-left">
-            <div className="leading-none">
-              <h1 className="text-5xl font-semibold">One</h1>
-              <h2 className="text-3xl font-semibold text-[#B74735] mt-2">
-                Core S1 V1.4
-              </h2>
-            </div>
-            <p className="text-xs text-white/60 leading-tight">
-              Primary neural cluster visualizing real-time thought processing
-              and decision tree branching.
-            </p>
-            <p className="text-xs">
-              Status:{" "}
-              <span className="text-[#629B80] font-semibold">
-                COGNISANT, LISTENING
-              </span>
-            </p>
-          </section>
-
-          {/* CENTER PANEL – 3D */}
-          <section className="flex justify-center items-center">
-            <div className="relative w-[80vw] max-w-xl aspect-square md:w-full scale-[1.05] md:scale-100">
-             
-
-              <Canvas
-                camera={{ position: [0, 0, 4.2], fov: 45 }}
-                className="rounded-full"
-              >
-                <Suspense fallback={null}>
-                  <color attach="background" args={["#000000"]} />
-                  <ambientLight intensity={0.4} />
-                  <directionalLight
-                    position={[2, 2, 3]}
-                    intensity={1.5}
-                    color={new THREE.Color("#B74735")}
-                  />
-                  <directionalLight position={[-3, -2, -4]} intensity={0.5} />
-                 
-                  <CoreBlob />
-                  <OrbitControls
-                    enableZoom={false}
-                    autoRotate
-                    autoRotateSpeed={0.4}
-                  />
-                </Suspense>
-              </Canvas>
-            </div>
-          </section>
-
-          {/* RIGHT PANEL */}
-          <section className="flex flex-col gap-6 text-center md:text-right text-xs font-pp tracking-tight">
-            <Metric label="PROCESSING LOAD" value="94.2%" />
-            <Metric label="SYNAPTIC FIRING RATE" value="402 THz" />
-            <Metric label="ACTIVE THOUGHTS" value="8.2M" />
-          </section>
-        </div>
-
-        {/* BOTTOM BAR */}
-        <footer className="absolute bottom-0 left-0 right-0 border-t border-white/10 px-8 py-2 flex items-center justify-between text-[10px] text-white/50">
-          <span>● LIVE SIMULATION</span>
-          <span>MOUSE_INTERACTION: DISABLED</span>
-        </footer>
-      </main>
+      <Nav activeSection={activeSection} onSectionChange={setActiveSection} />
+      <main className="relative flex-1 overflow-hidden">{content}</main>
     </div>
   );
 }
 
-/* ---------------- NAVIGATION ---------------- */
+function InterfaceLayout() {
+  return (
+    <>
+      {/* Starfield */}
+      <div className="pointer-events-none absolute inset-0 opacity-40">
+        <Starfield />
+      </div>
 
-function Nav() {
+      {/* MOBILE: flex at bottom, DESKTOP: 3-column grid */}
+      <div
+        className="
+          relative z-10 h-full
+          flex flex-col justify-end items-center gap-10
+          px-6 md:px-10 py-8
+          md:grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)_minmax(0,1fr)]
+          md:items-center md:gap-8
+        "
+      >
+        {/* LEFT PANEL */}
+        <section className="space-y-5 max-w-sm text-center md:text-left">
+          <div className="leading-none">
+            <h1 className="text-5xl font-semibold">One</h1>
+            <h2 className="text-3xl font-semibold text-[#B74735] mt-2">
+              Core S1 V1.4
+            </h2>
+          </div>
+          <p className="text-xs text-white/60 leading-tight">
+            Primary neural cluster visualizing real-time thought processing and
+            decision tree branching.
+          </p>
+          <p className="text-xs">
+            Status:{" "}
+            <span className="text-[#629B80] font-semibold">
+              COGNISANT, LISTENING
+            </span>
+          </p>
+        </section>
+
+        {/* CENTER PANEL – 3D */}
+        <section className="flex justify-center items-center">
+          <div className="relative w-[80vw] max-w-xl aspect-square md:w-full scale-[1.05] md:scale-100">
+            <Canvas
+              camera={{ position: [0, 0, 4.2], fov: 45 }}
+              className="rounded-full"
+            >
+              <Suspense fallback={null}>
+                <color attach="background" args={["#000000"]} />
+                <ambientLight intensity={0.4} />
+                <directionalLight
+                  position={[2, 2, 3]}
+                  intensity={1.5}
+                  color={new THREE.Color("#B74735")}
+                />
+                <directionalLight position={[-3, -2, -4]} intensity={0.5} />
+
+                <CoreBlob />
+                <OrbitControls
+                  enableZoom={false}
+                  autoRotate
+                  autoRotateSpeed={0.4}
+                />
+              </Suspense>
+            </Canvas>
+          </div>
+        </section>
+
+        {/* RIGHT PANEL */}
+        <section className="flex flex-col gap-6 text-center md:text-right text-xs font-pp tracking-tight">
+          <Metric label="PROCESSING LOAD" value="94.2%" />
+          <Metric label="SYNAPTIC FIRING RATE" value="402 THz" />
+          <Metric label="ACTIVE THOUGHTS" value="8.2M" />
+        </section>
+      </div>
+
+      {/* BOTTOM BAR */}
+      <footer className="absolute bottom-0 left-0 right-0 border-t border-sprntBorder px-6 py-2 flex items-center justify-between text-[10px] text-white/50 bg-black/80">
+        <span>● LIVE SIMULATION</span>
+        <span>MOUSE_INTERACTION: DISABLED</span>
+      </footer>
+    </>
+  );
+}
+
+function Nav({
+  activeSection,
+  onSectionChange,
+}: {
+  activeSection: SectionId;
+  onSectionChange: (section: SectionId) => void;
+}) {
   const [date, setDate] = useState({ day: "", month: "", year: "" });
 
   useEffect(() => {
     const d = new Date();
     const day = String(d.getDate()).padStart(2, "0");
-    const month = d
-      .toLocaleString("en-US", { month: "short" })
-      .toUpperCase();
+    const month = d.toLocaleString("en-US", { month: "short" }).toUpperCase();
     const year = String(d.getFullYear());
     setDate({ day, month, year });
   }, []);
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-4 border-b border-sprntBorder text-[10px] uppercase tracking-[0.22em]">
-      {/* LEFT — date */}
+    <nav
+      className={
+        "fixed top-[10px] left-[20px] right-[20px] h-12 z-50 flex items-center justify-between bg-transparent font-pp"
+      }
+    >
       <div className="hidden md:flex items-center gap-[6px] font-ocr">
         <NavTag>{date.day}</NavTag>
         <NavTag>{date.month}</NavTag>
@@ -118,18 +144,43 @@ function Nav() {
       </div>
 
       {/* CENTER LINKS */}
-      <div className="flex items-center gap-8 font-ocr text-[12px] text-sprntText tracking-tight">
-        <NavLink active>INTERFACE</NavLink>
-        <NavLink>NEURAL NET</NavLink>
-        <NavLink>PROTOCOL</NavLink>
-        <NavLink>LOGS</NavLink>
+      <div className="flex items-center gap-[6px] text-[8px] font-ocr tracking-tight">
+        <NavLink
+          active={activeSection === "INTERFACE"}
+          onClick={() => onSectionChange("INTERFACE")}
+        >
+          INTERFACE
+        </NavLink>
+        <NavLink
+          active={activeSection === "NEURAL NET"}
+          onClick={() => onSectionChange("NEURAL NET")}
+        >
+          NEURAL NET
+        </NavLink>
+        <NavLink
+          active={activeSection === "PROTOCOL"}
+          onClick={() => onSectionChange("PROTOCOL")}
+        >
+          PROTOCOL
+        </NavLink>
+        <NavLink
+          active={activeSection === "LOGS"}
+          onClick={() => onSectionChange("LOGS")}
+        >
+          LOGS
+        </NavLink>
       </div>
 
       {/* RIGHT — CTA */}
       <button
-        className="hidden md:inline-flex items-center bg-sprntBg border border-sprntAccent text-sprntText px-4 py-[6px]
-                   text-[10px] tracking-[0.18em] uppercase font-ocr transition-all
-                   hover:bg-sprntAccent hover:text-sprntBg hover:border-sprntAccent"
+        className="
+          hidden md:inline-flex items-center
+          border px-4 py-[6px]
+          text-[10px] tracking-tight uppercase font-ocr
+          transition-colors
+          bg-black/40 border-sprntAccent text-sprntText
+          hover:bg-sprntAccent hover:text-sprntBg
+        "
       >
         Initialize
       </button>
@@ -148,17 +199,21 @@ function NavTag({ children }: { children: React.ReactNode }) {
 function NavLink({
   children,
   active = false,
+  onClick,
 }: {
   children: React.ReactNode;
   active?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
+      onClick={onClick}
       className={
-        "transition-colors " +
+        "inline-flex items-center px-2 py-[3px] border text-[10px] md:text-[11px] " +
+        "tracking-tight transition-colors " +
         (active
-          ? "text-sprntAccent"
-          : "text-sprntText/70 hover:text-sprntText")
+          ? "border-sprntAccent bg-sprntAccent text-sprntBg"
+          : "border-sprntBorder/60 bg-black/30 text-sprntText/70 hover:border-sprntAccent hover:text-sprntText")
       }
     >
       {children}
@@ -166,7 +221,7 @@ function NavLink({
   );
 }
 
-/* ---------------- METRICS ---------------- */
+/* ---------------- metrics ---------------- */
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
@@ -177,9 +232,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* ---------------- 3D ELEMENTS ---------------- */
-
-
+/* ---------------- 3D elelments ---------------- */
 
 function CoreBlob() {
   const ref = useRef<THREE.Mesh>(null!);

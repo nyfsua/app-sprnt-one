@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ----------------------------------------------
-   FONT FACES
+   fonst
    ---------------------------------------------- */
 
 @font-face {
@@ -21,7 +21,7 @@
 }
 
 /* ----------------------------------------------
-   THEME TOKENS (TAILWIND v4)
+   theme
    ---------------------------------------------- */
 
 @theme {
@@ -40,7 +40,7 @@
 }
 
 /* ----------------------------------------------
-   GLOBAL BASE
+   global base
    ---------------------------------------------- */
 
 @layer base {
@@ -86,4 +86,13 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.scrollbar-hide {
+  -ms-overflow-style: none;     
+  scrollbar-width: none;       
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;               
 }
