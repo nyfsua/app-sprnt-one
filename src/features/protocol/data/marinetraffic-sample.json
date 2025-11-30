@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ship_001",
+    "imo": "9395044",
+    "name": "MAERSK LAGOS",
+    "lat": 4.5,
+    "lng": 7.0,
+    "speed": 15.2,
+    "country": "Liberia",
+    "ts": "2024-11-20T11:55:00Z"
+  },
+  {
+    "id": "ship_002",
+    "imo": "9706891",
+    "name": "MSC ATLANTIC",
+    "lat": 6.0,
+    "lng": 2.4,
+    "speed": 12.8,
+    "country": "Panama",
+    "ts": "2024-11-20T12:05:00Z"
+  }
+]

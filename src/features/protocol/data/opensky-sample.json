@@ -1,0 +1,22 @@
+[
+  {
+    "id": "flight_001",
+    "callsign": "KQ101",
+    "lat": 8.9915,
+    "lng": 7.3943,
+    "altitude": 10500,
+    "speed": 760,
+    "country": "Kenya",
+    "ts": "2024-11-20T12:35:00Z"
+  },
+  {
+    "id": "flight_002",
+    "callsign": "BA74",
+    "lat": 14.5994,
+    "lng": -17.451,
+    "altitude": 11200,
+    "speed": 820,
+    "country": "United Kingdom",
+    "ts": "2024-11-20T12:36:00Z"
+  }
+]

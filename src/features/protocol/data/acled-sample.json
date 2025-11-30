@@ -1,0 +1,22 @@
+[
+  {
+    "id": "acled_001",
+    "event_date": "2024-11-20T12:30:00Z",
+    "event_type": "Battles",
+    "sub_event_type": "Armed clash",
+    "latitude": 9.0765,
+    "longitude": 7.3986,
+    "country": "Nigeria",
+    "notes": "Clash between security forces and armed group near Abuja."
+  },
+  {
+    "id": "acled_002",
+    "event_date": "2024-11-19T15:00:00Z",
+    "event_type": "Protests",
+    "sub_event_type": "Protest with intervention",
+    "latitude": 6.5244,
+    "longitude": 3.3792,
+    "country": "Nigeria",
+    "notes": "Demonstration at Lagos port over fuel prices."
+  }
+]

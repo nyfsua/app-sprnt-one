@@ -1,10 +1,12 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
+import { LoginPage } from "./features/auth";
 import * as THREE from "three";
 import { ProtocolShell } from "./features/protocol";
+import { LogShell } from "./features/logs";
 
-type SectionId = "INTERFACE" | "NEURAL NET" | "PROTOCOL" | "LOGS";
+type SectionId = "INTERFACE" | "(O)" | "PROTOCOL" | "LOGS" | "LOGIN";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<SectionId>("INTERFACE");
@@ -14,11 +16,17 @@ export default function App() {
     case "PROTOCOL":
       content = <ProtocolShell />;
       break;
-
-    case "NEURAL NET":
+    case "LOGIN":
+      content = <LoginPage />;
+      break;
+    case "(O)":
+      default:
+        content = <Home/>;
+        break;
     case "LOGS":
+    content = <LogShell />;
+    break;
     case "INTERFACE":
-    default:
       content = <InterfaceLayout />;
       break;
   }
@@ -27,6 +35,13 @@ export default function App() {
     <div className="min-h-screen bg-black text-sprntText flex flex-col">
       <Nav activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="relative flex-1 overflow-hidden">{content}</main>
+    </div>
+  );
+}
+function Home() {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <h1 className="text-3xl text-white/60">Welcome to One - Home Section</h1>
     </div>
   );
 }
@@ -105,11 +120,7 @@ function InterfaceLayout() {
         </section>
       </div>
 
-      {/* BOTTOM BAR */}
-      <footer className="absolute bottom-0 left-0 right-0 border-t border-sprntBorder px-6 py-2 flex items-center justify-between text-[10px] text-white/50 bg-black/80">
-        <span>● LIVE SIMULATION</span>
-        <span>MOUSE_INTERACTION: DISABLED</span>
-      </footer>
+     
     </>
   );
 }
@@ -132,11 +143,8 @@ function Nav({
   }, []);
 
   return (
-    <nav
-      className={
-        "fixed top-[10px] left-[20px] right-[20px] h-12 z-50 flex items-center justify-between bg-transparent font-pp"
-      }
-    >
+    <nav className="fixed top-[10px] left-[20px] right-[20px] h-12 z-50 flex items-center justify-between bg-transparent font-ocr">
+      {/* LEFT – DATE */}
       <div className="hidden md:flex items-center gap-[6px] font-ocr">
         <NavTag>{date.day}</NavTag>
         <NavTag>{date.month}</NavTag>
@@ -144,25 +152,31 @@ function Nav({
       </div>
 
       {/* CENTER LINKS */}
-      <div className="flex items-center gap-[6px] text-[8px] font-ocr tracking-tight">
+      <div className="flex items-center gap-[6px] text-[10px] md:px-5 md:py-[6px] font-ocr tracking-tight transition-colors
+      hover:text-[#303032]
+      hover:border-sprntAccent">
+
+        <NavLink
+          active={activeSection === "(O)"}
+          onClick={() => onSectionChange("(O)")}
+        >
+          (O)
+        </NavLink>
+
         <NavLink
           active={activeSection === "INTERFACE"}
           onClick={() => onSectionChange("INTERFACE")}
         >
           INTERFACE
         </NavLink>
-        <NavLink
-          active={activeSection === "NEURAL NET"}
-          onClick={() => onSectionChange("NEURAL NET")}
-        >
-          NEURAL NET
-        </NavLink>
+        
         <NavLink
           active={activeSection === "PROTOCOL"}
           onClick={() => onSectionChange("PROTOCOL")}
         >
           PROTOCOL
         </NavLink>
+
         <NavLink
           active={activeSection === "LOGS"}
           onClick={() => onSectionChange("LOGS")}
@@ -171,18 +185,24 @@ function Nav({
         </NavLink>
       </div>
 
-      {/* RIGHT — CTA */}
+      {/* RIGHT — CTA -> LOGIN VIEW */}
       <button
+        onClick={() => onSectionChange("LOGIN")}
         className="
-          hidden md:inline-flex items-center
-          border px-4 py-[6px]
-          text-[10px] tracking-tight uppercase font-ocr
-          transition-colors
-          bg-black/40 border-sprntAccent text-sprntText
-          hover:bg-sprntAccent hover:text-sprntBg
+          inline-flex items-center
+      bg-transparent
+      border border-sprntAccent
+      px-3 py-[4px] font-ocr uppercase
+      md:px-5 md:py-[6px] md:text-[10px] md:tracking-tight
+      uppercase
+      text-sprntAccent
+      transition-colors
+      hover:bg-sprntAccent
+      hover:text-sprntBg
+      hover:border-sprntAccent
         "
       >
-        Initialize
+        INITIALIZE ONE
       </button>
     </nav>
   );
@@ -232,7 +252,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* ---------------- 3D elelments ---------------- */
+/* ---------------- 3D elements ---------------- */
 
 function CoreBlob() {
   const ref = useRef<THREE.Mesh>(null!);

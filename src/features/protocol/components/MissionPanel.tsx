@@ -16,15 +16,15 @@ interface Mission {
 const MOCK_MISSIONS: Mission[] = [
   {
     id: "068",
-    code: "loveeseat.",
+    code: "loveseat",
     time: "13:29",
-    objective: "Retrieve documents from truck.",
+    objective: "Retrieve documents.",
     status: "Ongoing",
     location: "Western Africa",
   },
   {
     id: "067",
-    code: "ninjamonkey.",
+    code: "ninjamonkey",
     time: "12:56",
     objective: "Infiltrate truck.",
     status: "Successful",
@@ -32,7 +32,7 @@ const MOCK_MISSIONS: Mission[] = [
   },
   {
     id: "066",
-    code: "palantir II.",
+    code: "palantir II",
     time: "12:23",
     objective: "Track truck.",
     status: "Successful",
@@ -40,7 +40,7 @@ const MOCK_MISSIONS: Mission[] = [
   },
   {
     id: "065",
-    code: "palantir I.",
+    code: "palantir I",
     time: "11:07",
     objective: "Identify truck.",
     status: "Successful",
@@ -48,7 +48,7 @@ const MOCK_MISSIONS: Mission[] = [
   },
   {
     id: "064",
-    code: "homeweethome.",
+    code: "homeweethome",
     time: "10:38",
     objective: "Visit safehouse, set up equipment.",
     status: "Successful",
@@ -56,7 +56,7 @@ const MOCK_MISSIONS: Mission[] = [
   },
   {
     id: "063",
-    code: "tenets.",
+    code: "tenets",
     time: "09:30",
     objective: "Hitchless MMA checkout.",
     status: "Successful",
@@ -76,36 +76,27 @@ const MissionPanel: React.FC = () => {
           <div>
             <div className="text-[16px] font-ocr uppercase tracking-tight leading-tight">
               Mission Highlights
-              <span className="text-sprntAccent align-top text-[11px] ml-[2px]">
+              <span className="text-sprntAccent align-top text-[10px] ml-[2px]">
                 13
               </span>
             </div>
-            <div className="mt-[4px] text-[11px] text-sprntMuted leading-tight">
+            <div className="mt-[4px] text-[10px] text-sprntText font-ocr leading-tight tracking-tight">
               6 Updates in the last 3 Hours
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-[11px] text-sprntMuted">
+          <div className="flex items-center gap-2 text-[16px] text-sprntText">
             {/* refresh icon placeholder */}
-            <div
-              className="h-[24px] w-[24px] flex items-center justify-center"
-              style={{ border: `1px solid ${BORDER}` }}
-            >
+            <div className="h-[24px] w-[24px] flex items-center justify-center hover:text-sprntAccent transition-colors" >
               ↻
             </div>
-            {/* AI icon placeholder */}
-            <div
-              className="h-[24px] w-[24px] flex items-center justify-center"
-              style={{ border: `1px solid ${BORDER}` }}
-            >
-              AI
-            </div>
+            
           </div>
         </div>
       </header>
 
-      {/* SCROLLABLE LIST */}
-      <div className="flex-1 overflow-y-auto overflow-y-auto scrollbar-hide">
+      {/* list */}
+      <div className="flex-1 overflow-y-auto overflow-y-auto font-ocr tracking-tight scrollbar-hide">
         {MOCK_MISSIONS.map((mission, idx) => (
           <MissionCard
             key={mission.id}
@@ -138,7 +129,7 @@ function MissionCard({
     >
       {/* Top row: task ID + time */}
       <div className="flex items-center justify-between mb-2">
-        <div className="text-[18px] font-ocr uppercase tracking-[0.16em]">
+        <div className="text-[16px] font-ocr uppercase tracking-tracking">
           Task {mission.id}
         </div>
         <div className="text-[16px] font-ocr text-sprntAccent">
@@ -147,7 +138,7 @@ function MissionCard({
       </div>
 
       {/* Details list */}
-      <dl className="text-[11px] leading-[1.5] mb-3">
+      <dl className="text-[10px] leading-tight mb-2">
         <MissionRow label="Code" value={mission.code} boldValue />
         <MissionRow label="Objective" value={mission.objective} />
         <MissionRow label="Status" value={mission.status} />
@@ -158,8 +149,8 @@ function MissionCard({
       <div className="flex items-center gap-3 mt-1">
         <button
           className="
-            flex-1 h-[32px]
-            text-[11px] font-ocr uppercase tracking-[0.16em]
+            mt-2 flex-1 h-[32px]
+            text-[10px] font-ocr uppercase tracking-tracking
             bg-[#151515]
             text-sprntText
             border
@@ -175,8 +166,8 @@ function MissionCard({
 
         <button
           className="
-            flex-1 h-[32px]
-            text-[11px] font-ocr uppercase tracking-[0.16em]
+            mt-2 flex-1 h-[32px]
+            text-[10px] font-ocr uppercase tracking-tracking
             border
             flex items-center justify-center
             bg-transparent
@@ -206,8 +197,8 @@ function MissionRow({
 }) {
   return (
     <div className="flex">
-      <div className="w-[68px] text-sprntMuted">{label}</div>
-      <div className="w-[10px] text-sprntMuted text-center">:</div>
+      <div className="w-[68px] text-sprntText">{label}</div>
+      <div className="w-[10px] text-sprntText text-center">:</div>
       <div className={`flex-1 ${boldValue ? "font-semibold" : ""}`}>
         {value}
       </div>

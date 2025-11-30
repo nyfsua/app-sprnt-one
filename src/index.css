@@ -96,3 +96,15 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;               
 }
+
+
+.mapboxgl-ctrl-bottom-right {
+  bottom: 8px;
+  right: 8px;
+}
+
+.mapboxgl-ctrl-attrib {
+  background: transparent;
+  font-size: 8px;
+  color: #C6C6C8;
+}
