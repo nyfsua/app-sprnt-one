@@ -50,7 +50,7 @@ const TOTAL_AMOUNT = "2156093,07";
 
 const LogShell: React.FC = () => {
   return (
-    <div className="mt-20 w-[full] min-h-screen bg-[#151515] flex items-center justify-center px-4 py-6">
+    <div className=" w-[full] min-h-screen flex items-center justify-center px-4 py-6">
       <div className="relative w-full max-w-4xl border border-[#B74735] bg-[#050505] text-[#E2E1DF] font-ocr text-[11px] leading-tight">
         {/* corner dots (white) */}
         <span className="absolute -top-[6px] -left-[6px] h-[6px] w-[6px] rounded-full bg-white" />
@@ -61,8 +61,7 @@ const LogShell: React.FC = () => {
         {/* TITLE LINE */}
         <div className="border-b border-[#B74735] px-6 py-4">
           <div className="text-[14px] text-[#E2E1DF]">
-            Invoice contract for payment №{" "}
-            <span className="text-[#B74735]">22-33348</span> from{" "}
+            Logbook for User 007 from{" "}
             <span className="text-[#B74735]">20.09.2022</span>
           </div>
         </div>

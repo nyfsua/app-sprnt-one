@@ -9,7 +9,7 @@ import { LogShell } from "./features/logbook";
 type SectionId = "INTERFACE" | "(O)" | "PROTOCOL" | "LOGS" | "LOGIN";
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState<SectionId>("INTERFACE");
+  const [activeSection, setActiveSection] = useState<SectionId>("(O)");
 
   let content;
   switch (activeSection) {
@@ -40,8 +40,8 @@ export default function App() {
 }
 function Home() {
   return (
-    <div className="flex items-center justify-center h-full">
-      <h1 className="text-3xl text-white/60">Welcome to One - Home Section</h1>
+    <div className="flex items-center justify-center h-full py-60">
+      <h1 className="mt-20 text-3xl text-[#C6C6C8]/60">Welcome to One.</h1>
     </div>
   );
 }
@@ -54,38 +54,10 @@ function InterfaceLayout() {
         <Starfield />
       </div>
 
-      {/* MOBILE: flex at bottom, DESKTOP: 3-column grid */}
-      <div
-        className="
-          relative z-10 h-full
-          flex flex-col justify-end items-center gap-10
-          px-6 md:px-10 py-8
-          md:grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)_minmax(0,1fr)]
-          md:items-center md:gap-8
-        "
-      >
-        {/* LEFT PANEL */}
-        <section className="space-y-5 max-w-sm text-center md:text-left">
-          <div className="leading-none">
-            <h1 className="text-5xl font-semibold">One</h1>
-            <h2 className="text-3xl font-semibold text-[#B74735] mt-2">
-              Core S1 V1.4
-            </h2>
-          </div>
-          <p className="text-xs text-white/60 leading-tight">
-            Primary neural cluster visualizing real-time thought processing and
-            decision tree branching.
-          </p>
-          <p className="text-xs">
-            Status:{" "}
-            <span className="text-[#629B80] font-semibold">
-              COGNISANT, LISTENING
-            </span>
-          </p>
-        </section>
+       
 
         {/* CENTER PANEL – 3D */}
-        <section className="flex justify-center items-center">
+        <section className="mt-30 flex justify-center items-center">
           <div className="relative w-[80vw] max-w-xl aspect-square md:w-full scale-[1.05] md:scale-100">
             <Canvas
               camera={{ position: [0, 0, 4.2], fov: 45 }}
@@ -111,16 +83,6 @@ function InterfaceLayout() {
             </Canvas>
           </div>
         </section>
-
-        {/* RIGHT PANEL */}
-        <section className="flex flex-col gap-6 text-center md:text-right text-xs font-pp tracking-tight">
-          <Metric label="PROCESSING LOAD" value="94.2%" />
-          <Metric label="SYNAPTIC FIRING RATE" value="402 THz" />
-          <Metric label="ACTIVE THOUGHTS" value="8.2M" />
-        </section>
-      </div>
-
-     
     </>
   );
 }
