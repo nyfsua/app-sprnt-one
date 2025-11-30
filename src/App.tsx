@@ -6,10 +6,10 @@ import * as THREE from "three";
 import { ProtocolShell } from "./features/protocol";
 import { LogShell } from "./features/logbook";
 
-type SectionId = "INTERFACE" | "(O)" | "PROTOCOL" | "LOGS" | "LOGIN";
+type SectionId = "INTERFACE" | "[D]" | "PROTOCOL" | "LOGS" | "LOGIN";
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState<SectionId>("(O)");
+  const [activeSection, setActiveSection] = useState<SectionId>("[D]");
 
   let content;
   switch (activeSection) {
@@ -19,7 +19,7 @@ export default function App() {
     case "LOGIN":
       content = <LoginPage />;
       break;
-    case "(O)":
+    case "[D]":
       default:
         content = <Home/>;
         break;
@@ -38,6 +38,7 @@ export default function App() {
     </div>
   );
 }
+
 function Home() {
   return (
     <div className="flex items-center justify-center h-full py-60">
@@ -119,10 +120,10 @@ function Nav({
       hover:border-sprntAccent">
 
         <NavLink
-          active={activeSection === "(O)"}
-          onClick={() => onSectionChange("(O)")}
+          active={activeSection === "[D]"}
+          onClick={() => onSectionChange("[D]")}
         >
-          (O)
+          [D]
         </NavLink>
 
         <NavLink
