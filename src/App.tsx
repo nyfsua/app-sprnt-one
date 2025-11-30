@@ -4,7 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { LoginPage } from "./features/auth";
 import * as THREE from "three";
 import { ProtocolShell } from "./features/protocol";
-import { LogShell } from "./features/logs";
+import { LogShell } from "./features/logbook";
 
 type SectionId = "INTERFACE" | "(O)" | "PROTOCOL" | "LOGS" | "LOGIN";
 
