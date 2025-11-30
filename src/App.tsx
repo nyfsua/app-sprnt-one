@@ -203,17 +203,6 @@ function NavLink({
   );
 }
 
-/* ---------------- metrics ---------------- */
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="space-y-1">
-      <div className="text-[10px] tracking-[0.22em] text-white/40">{label}</div>
-      <div className="text-xl">{value}</div>
-    </div>
-  );
-}
-
 /* ---------------- 3D elements ---------------- */
 
 function CoreBlob() {
