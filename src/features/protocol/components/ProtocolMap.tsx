@@ -12,6 +12,7 @@ interface ProtocolMapProps {
   visibleLayers: Record<ProtocolLayerId, boolean>;
 }
 
+// if your Tailwind tokens exist you can swap hex for classes elsewhere
 const PROTOCOL_COLOR = "#B74735";
 
 const HIDE_POI_PREFIXES = [
@@ -37,6 +38,16 @@ const LAYER_LABELS: Record<string, string> = {
   infrastructure: "NASCENT INFRASTRUCTURE",
   cultural: "CULTURAL EVENT",
 };
+
+// Mapbox image ids + asset URLs
+const PROTOCOL_ICON_DEFS = [
+  { name: "protocol-conflict", url: "/assets/protocol/icon-conflict.png" },
+  { name: "protocol-protests", url: "/assets/protocol/icon-protests.png" },
+  { name: "protocol-shipping", url: "/assets/protocol/icon-shipping.png" },
+  { name: "protocol-air", url: "/assets/protocol/icon-air.png" },
+  { name: "protocol-infrastructure", url: "/assets/protocol/icon-infra.png", },
+  { name: "protocol-cultural", url: "/assets/protocol/icon-culture.png" },
+];
 
 const ProtocolMap: React.FC<ProtocolMapProps> = ({ visibleLayers }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -74,6 +85,9 @@ const ProtocolMap: React.FC<ProtocolMapProps> = ({ visibleLayers }) => {
         "star-intensity": 0.0,
       });
 
+      /* ------------------------------ LOAD ICONS -------------------------------- */
+      await loadProtocolIcons(map);
+
       /* ---------------------------- LOAD LOCAL EVENTS ---------------------------- */
       const events = await loadLocalProtocolEvents();
 
@@ -105,7 +119,7 @@ const ProtocolMap: React.FC<ProtocolMapProps> = ({ visibleLayers }) => {
         );
       }
 
-      addOrUpdateProtocolLayers(map);
+      addOrUpdateProtocolSymbolLayers(map);
       hideBasePointLayers(map);
       attachEventHandlers(map);
     });
@@ -128,12 +142,12 @@ const ProtocolMap: React.FC<ProtocolMapProps> = ({ visibleLayers }) => {
       map.setLayoutProperty(id, "visibility", visible ? "visible" : "none");
     };
 
-    setVis("conflict-points", visibleLayers.conflict);
-    setVis("protests-points", visibleLayers.protests);
-    setVis("shipping-points", visibleLayers.shipping);
-    setVis("air-points", visibleLayers.air);
-    setVis("infrastructure-points", visibleLayers.infrastructure);
-    setVis("cultural-points", visibleLayers.cultural);
+    setVis("conflict-symbols", visibleLayers.conflict);
+    setVis("protests-symbols", visibleLayers.protests);
+    setVis("shipping-symbols", visibleLayers.shipping);
+    setVis("air-symbols", visibleLayers.air);
+    setVis("infrastructure-symbols", visibleLayers.infrastructure);
+    setVis("cultural-symbols", visibleLayers.cultural);
   }, [visibleLayers]);
 
   return (
@@ -146,38 +160,90 @@ const ProtocolMap: React.FC<ProtocolMapProps> = ({ visibleLayers }) => {
 export default ProtocolMap;
 
 /* -------------------------------------------------------------------------- */
-/*                                LAYER HELPERS                                */
+/*                          ICON LOADING (IMAGES)                              */
 /* -------------------------------------------------------------------------- */
 
-function addOrUpdateProtocolLayers(map: Map) {
-  const mkLayer = (id: string, protocolLayerValue: string) => ({
+async function loadProtocolIcons(map: Map) {
+  const loadOne = (def: (typeof PROTOCOL_ICON_DEFS)[number]) =>
+    new Promise<void>((resolve, reject) => {
+      if (map.hasImage(def.name)) return resolve();
+
+      const img = new Image(64, 64);
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        try {
+          // sdf:true -> we can recolor with icon-color
+          map.addImage(def.name, img, { sdf: true });
+          resolve();
+        } catch (err) {
+          console.error("[Protocol] addImage failed", def.name, err);
+          resolve();
+        }
+      };
+      img.onerror = (err) => {
+        console.error("[Protocol] icon load failed", def.url, err);
+        reject(err);
+      };
+      img.src = def.url;
+    });
+
+  await Promise.all(PROTOCOL_ICON_DEFS.map(loadOne));
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                LAYER HELPERS                               */
+/* -------------------------------------------------------------------------- */
+
+function addOrUpdateProtocolSymbolLayers(map: Map) {
+  const mkLayer = (
+    id: string,
+    protocolLayerValue: string,
+    iconName: string
+  ): mapboxgl.SymbolLayer => ({
     id,
-    type: "circle" as const,
+    type: "symbol",
     source: "protocol-events",
     filter: ["==", ["get", "protocolLayer"], protocolLayerValue],
+    layout: {
+      "icon-image": iconName,
+      "icon-size": 0.5, // tweak icon scale here
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+    },
     paint: {
-      "circle-radius": 6,
-      "circle-color": PROTOCOL_COLOR,
-      "circle-stroke-color": "#E2E1DF",
-      "circle-stroke-width": 0.6,
-      "circle-opacity": 1.0,
+      "icon-color": PROTOCOL_COLOR,
+      "icon-opacity": 1.0,
     },
   });
 
-  const layers = [
-    mkLayer("conflict-points", "conflict"),
-    mkLayer("protests-points", "protests"),
-    mkLayer("shipping-points", "shipping"),
-    mkLayer("air-points", "air"),
-    mkLayer("infrastructure-points", "infrastructure"),
-    mkLayer("cultural-points", "cultural"),
+  const layers: mapboxgl.SymbolLayer[] = [
+    mkLayer("conflict-symbols", "conflict", "protocol-conflict"),
+    mkLayer("protests-symbols", "protests", "protocol-protests"),
+    mkLayer("shipping-symbols", "shipping", "protocol-shipping"),
+    mkLayer("air-symbols", "air", "protocol-air"),
+    mkLayer(
+      "infrastructure-symbols",
+      "infrastructure",
+      "protocol-infrastructure"
+    ),
+    mkLayer("cultural-symbols", "cultural", "protocol-cultural"),
   ];
 
   layers.forEach((layer) => {
     if (!map.getLayer(layer.id)) {
-      map.addLayer(layer as any);
+      map.addLayer(layer);
     } else {
-      map.setPaintProperty(layer.id, "circle-color", PROTOCOL_COLOR);
+      // update existing layer on style reload
+      map.setLayoutProperty(
+        layer.id,
+        "icon-image",
+        layer.layout?.["icon-image"] as any
+      );
+      map.setPaintProperty(
+        layer.id,
+        "icon-color",
+        layer.paint?.["icon-color"] as any
+      );
     }
   });
 }
@@ -195,23 +261,25 @@ function hideBasePointLayers(map: Map) {
     if (isPointLike && shouldHide) {
       try {
         map.setLayoutProperty(layer.id, "visibility", "none");
-      } catch {}
+      } catch {
+        // ignore layer we can't touch
+      }
     }
   });
 }
 
 /* -------------------------------------------------------------------------- */
-/*                           INTERACTIONS + POPUP CARD                          */
+/*                           INTERACTIONS + POPUP CARD                        */
 /* -------------------------------------------------------------------------- */
 
 function attachEventHandlers(map: Map) {
   const layers = [
-    "conflict-points",
-    "protests-points",
-    "shipping-points",
-    "air-points",
-    "infrastructure-points",
-    "cultural-points",
+    "conflict-symbols",
+    "protests-symbols",
+    "shipping-symbols",
+    "air-symbols",
+    "infrastructure-symbols",
+    "cultural-symbols",
   ];
 
   // Hover cursor
@@ -267,16 +335,13 @@ function attachEventHandlers(map: Map) {
             letter-spacing: .02em;
           "
         >
-
-          <!-- TAG + TIMESTAMP -->
           <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
             <div
               style="
                 font-family: 'OCR A Std', monospace;
                 font-size: 9px;
                 text-transform: uppercase;
-                
-                color: #B74735;
+                color: ${PROTOCOL_COLOR};
                 letter-spacing: 0.12em;
               "
             >
@@ -295,19 +360,17 @@ function attachEventHandlers(map: Map) {
             </div>
           </div>
 
-          <!-- KIND + COUNTRY -->
           <div style="font-weight:600; text-transform:uppercase; margin-bottom:4px; color:#C6C6C8; font-size:16px;">
             ${kind} • ${country}
           </div>
 
-          <!-- TITLE -->
           <div style="margin-bottom:3px; color:#C6C6C8; font-weight:200; font-size:10px;">
             ${title}
           </div>
 
           ${
             subtitle
-              ? `<div style="color:#C6C6C8 font-size:10px;">${subtitle}</div>`
+              ? `<div style="color:#C6C6C8; font-size:10px;">${subtitle}</div>`
               : ""
           }
         </div>
