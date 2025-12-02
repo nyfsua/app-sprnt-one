@@ -1,3 +1,4 @@
+// src/features/auth/index.ts
 export { default as LoginPage } from "./LoginPage";
-export { default as LoginForm } from "./components/LoginForm";
-export type { LoginFormProps } from "./components/LoginForm";
+export { default as SignUpPage } from "./SignUpPage";
+export type { AuthPayload, AuthMode } from "./components/LoginForm";

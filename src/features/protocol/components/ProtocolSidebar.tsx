@@ -66,7 +66,7 @@ function AgentDossierSection() {
             User Dossier
           </div>
           <div className="mt-[4px] font-ocr tracking-tight text-[8px] text-[#C6C6C8] leading-tight">
-            Personnel Information
+            Protocol Information
           </div>
         </div>
       </div>
@@ -123,8 +123,8 @@ function ProtocolLayersSection({
   onToggleLayer: (layer: ProtocolLayerId) => void;
 }) {
   const layers: { id: ProtocolLayerId; label: string }[] = [
-    { id: "conflict", label: "CONFLICTS, POLITICAL VIOLENCE" },
-    { id: "protests", label: "PROTESTS, CIVIL UNREST" },
+    { id: "conflict", label: "CONFLICTS, TERRORISM, VIOLENCE" },
+    { id: "protests", label: "PROTESTS, CIVIL UNREST (POLITICAL)" },
     { id: "shipping", label: "SHIPPING LANES AND PORTS" },
     { id: "air", label: "AIR TRAFFIC CORRIDORS" },
     { id: "infrastructure", label: "NASCENT INFRASTRUCTURE" },

@@ -1,33 +1,74 @@
+// src/App.tsx
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 import { LoginPage } from "./features/auth";
 import * as THREE from "three";
 import { ProtocolShell } from "./features/protocol";
 import { LogShell } from "./features/logbook";
 
-type SectionId = "INTERFACE" | "[D]" | "PROTOCOL" | "LOGS" | "LOGIN";
+type SectionId = "INTERFACE" | "[D]" | "PROTOCOL" | "LOGS" | "LOGIN" | "COMPONENTS";
+
+type AuthPayload = {
+  email: string;
+  mode: "signup" | "login";
+};
+
+const AUTH_KEY = "sprnt_one_auth";
+const USER_KEY = "sprnt_one_user";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<SectionId>("[D]");
+  const [isAuthed, setIsAuthed] = useState(false);
 
-  let content;
+  // hydrate auth from localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem(AUTH_KEY);
+    setIsAuthed(stored === "1");
+  }, []);
+
+  const handleAuthenticated = (payload: AuthPayload) => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(AUTH_KEY, "1");
+      window.localStorage.setItem(
+        USER_KEY,
+        JSON.stringify({
+          email: payload.email,
+          mode: payload.mode,
+          ts: Date.now(),
+        })
+      );
+    }
+    setIsAuthed(true);
+    setActiveSection("[D]");
+  };
+
+  // Gate everything behind login
+  if (!isAuthed) {
+    return <LoginPage onAuthenticated={handleAuthenticated} />;
+  }
+
+  let content: ReactNode;
   switch (activeSection) {
     case "PROTOCOL":
       content = <ProtocolShell />;
       break;
-    case "LOGIN":
-      content = <LoginPage />;
-      break;
-    case "[D]":
-      default:
-        content = <Home/>;
-        break;
     case "LOGS":
-    content = <LogShell />;
-    break;
+      content = <LogShell />;
+      break;
     case "INTERFACE":
       content = <InterfaceLayout />;
+      break;
+    case "LOGIN":
+      content = <Home />;
+      break;
+    case "[D]":
+    default:
+      content = <Home />;
+      break;
+    case "COMPONENTS":
+      content = <ProtocolShell />;
       break;
   }
 
@@ -38,6 +79,8 @@ export default function App() {
     </div>
   );
 }
+
+/* ---------------- HOME / INTERFACE VIEWS ---------------- */
 
 function Home() {
   return (
@@ -55,38 +98,38 @@ function InterfaceLayout() {
         <Starfield />
       </div>
 
-       
+      {/* CENTER PANEL – 3D */}
+      <section className="mt-30 flex justify-center items-center">
+        <div className="relative w-[80vw] max-w-xl aspect-square md:w-full scale-[1.05] md:scale-100">
+          <Canvas
+            camera={{ position: [0, 0, 4.2], fov: 45 }}
+            className="rounded-full"
+          >
+            <Suspense fallback={null}>
+              <color attach="background" args={["#000000"]} />
+              <ambientLight intensity={0.4} />
+              <directionalLight
+                position={[2, 2, 3]}
+                intensity={1.5}
+                color={new THREE.Color("#B74735")}
+              />
+              <directionalLight position={[-3, -2, -4]} intensity={0.5} />
 
-        {/* CENTER PANEL – 3D */}
-        <section className="mt-30 flex justify-center items-center">
-          <div className="relative w-[80vw] max-w-xl aspect-square md:w-full scale-[1.05] md:scale-100">
-            <Canvas
-              camera={{ position: [0, 0, 4.2], fov: 45 }}
-              className="rounded-full"
-            >
-              <Suspense fallback={null}>
-                <color attach="background" args={["#000000"]} />
-                <ambientLight intensity={0.4} />
-                <directionalLight
-                  position={[2, 2, 3]}
-                  intensity={1.5}
-                  color={new THREE.Color("#B74735")}
-                />
-                <directionalLight position={[-3, -2, -4]} intensity={0.5} />
-
-                <CoreBlob />
-                <OrbitControls
-                  enableZoom={false}
-                  autoRotate
-                  autoRotateSpeed={0.4}
-                />
-              </Suspense>
-            </Canvas>
-          </div>
-        </section>
+              <CoreBlob />
+              <OrbitControls
+                enableZoom={false}
+                autoRotate
+                autoRotateSpeed={0.4}
+              />
+            </Suspense>
+          </Canvas>
+        </div>
+      </section>
     </>
   );
 }
+
+/* ---------------- NAV ---------------- */
 
 function Nav({
   activeSection,
@@ -96,6 +139,7 @@ function Nav({
   onSectionChange: (section: SectionId) => void;
 }) {
   const [date, setDate] = useState({ day: "", month: "", year: "" });
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
 
   useEffect(() => {
     const d = new Date();
@@ -104,6 +148,26 @@ function Nav({
     const year = String(d.getFullYear());
     setDate({ day, month, year });
   }, []);
+
+   const addMenuItems = [
+    "Interface",
+    "Breaking news",
+    "International clock",
+    "Vertical quoteline",
+    "Missions",
+    "World equity indices",
+    "Activity analysis",
+    "Commodity price search",
+    "Currency exchange",
+    "Daily predictions",
+    "Analytics and charting",
+  ];
+
+  // later you can wire this to actually add a window
+  const handleAddComponent = (label: string) => {
+    console.log("Add component:", label);
+    setIsAddMenuOpen(false);
+  };
 
   return (
     <nav className="fixed top-[10px] left-[20px] right-[20px] h-12 z-50 flex items-center justify-between bg-transparent font-ocr">
@@ -115,10 +179,7 @@ function Nav({
       </div>
 
       {/* CENTER LINKS */}
-      <div className="flex items-center gap-[6px] text-[10px] md:px-5 md:py-[6px] font-ocr tracking-tight transition-colors
-      hover:text-[#303032]
-      hover:border-sprntAccent">
-
+      <div className="flex items-center gap-[6px] text-[10px] md:px-5 md:py-[6px] font-ocr tracking-tight">
         <NavLink
           active={activeSection === "[D]"}
           onClick={() => onSectionChange("[D]")}
@@ -132,7 +193,7 @@ function Nav({
         >
           INTERFACE
         </NavLink>
-        
+
         <NavLink
           active={activeSection === "PROTOCOL"}
           onClick={() => onSectionChange("PROTOCOL")}
@@ -146,23 +207,53 @@ function Nav({
         >
           LOGS
         </NavLink>
-      </div>
 
-      {/* RIGHT — CTA -> LOGIN VIEW */}
+        <div className="relative">
+          <button
+  type="button"
+  onClick={() => setIsAddMenuOpen((open) => !open)}
+  className="inline-flex items-center px-2 py-[3px] border text-[10px] md:text-[11px]
+             tracking-tight transition-colors border-sprntBorder/60
+             bg-black/30 text-sprntText/70 hover:border-sprntAccent hover:text-sprntText"
+>
+  <span className="mr-1">ADD COMPONENT</span>
+  <span className="text-[8px]">{isAddMenuOpen ? "▲" : "▼"}</span>
+</button>
+
+          
+            {isAddMenuOpen && (
+  <div className="absolute left-0 mt-1 w-44 bg-black/95 border border-sprntBorder shadow-lg text-[10px] z-50 overflow-hidden">
+    {addMenuItems.map((item) => (
       <button
-        onClick={() => onSectionChange("LOGIN")}
+        key={item}
+        type="button"
+        onClick={() => handleAddComponent(item)}
+        className="w-full px-3 py-[6px] text-left text-sprntText/80 hover:bg-sprntAccent/10 hover:text-sprntText hover:border-l-2 hover:border-sprntAccent"
+      >
+        {item.toUpperCase()}
+      </button>
+    ))}
+  </div>
+)}
+          
+        </div>
+      </div>
+      
+
+      {/* RIGHT — CTA (you can later repurpose this as LOGOUT, etc.) */}
+      <button
+        onClick={() => onSectionChange("[D]")}
         className="
           inline-flex items-center
-      bg-transparent
-      border border-sprntAccent
-      px-3 py-[4px] font-ocr uppercase
-      md:px-5 md:py-[6px] md:text-[10px] md:tracking-tight
-      uppercase
-      text-sprntAccent
-      transition-colors
-      hover:bg-sprntAccent
-      hover:text-sprntBg
-      hover:border-sprntAccent
+          bg-transparent
+          border border-sprntAccent
+          px-3 py-[4px] font-ocr uppercase
+          md:px-5 md:py-[6px] md:text-[10px] md:tracking-tight
+          text-sprntAccent
+          transition-colors
+          hover:bg-sprntAccent
+          hover:text-sprntBg
+          hover:border-sprntAccent
         "
       >
         INITIALIZE ONE
@@ -204,7 +295,25 @@ function NavLink({
   );
 }
 
-/* ---------------- 3D elements ---------------- */
+/* ---------------- STARFIELD / 3D ---------------- */
+
+function Starfield() {
+  const stars = Array.from({ length: 180 });
+  return (
+    <svg className="w-full h-full" preserveAspectRatio="none">
+      {stars.map((_, i) => (
+        <circle
+          key={i}
+          cx={`${Math.random() * 100}%`}
+          cy={`${Math.random() * 100}%`}
+          r={Math.random() * 0.4 + 0.2}
+          fill="white"
+          opacity={Math.random() * 0.8}
+        />
+      ))}
+    </svg>
+  );
+}
 
 function CoreBlob() {
   const ref = useRef<THREE.Mesh>(null!);
@@ -253,23 +362,5 @@ function CoreBlob() {
     <mesh ref={ref} material={material}>
       <sphereGeometry args={[1.0, 120, 120]} />
     </mesh>
-  );
-}
-
-function Starfield() {
-  const stars = Array.from({ length: 180 });
-  return (
-    <svg className="w-full h-full" preserveAspectRatio="none">
-      {stars.map((_, i) => (
-        <circle
-          key={i}
-          cx={`${Math.random() * 100}%`}
-          cy={`${Math.random() * 100}%`}
-          r={Math.random() * 0.4 + 0.2}
-          fill="white"
-          opacity={Math.random() * 0.8}
-        />
-      ))}
-    </svg>
   );
 }

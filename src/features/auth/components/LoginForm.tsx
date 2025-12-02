@@ -1,18 +1,44 @@
-import React from "react";
+// src/features/auth/LoginForm.tsx
+import React, { useState } from "react";
 
-export interface LoginFormProps {
-  mode?: "signup" | "login";
-}
+export type AuthMode = "signup" | "login";
 
-const LoginForm: React.FC<LoginFormProps> = ({ mode = "signup" }) => {
+export type AuthPayload = {
+  email: string;
+  mode: AuthMode;
+};
+
+type LoginFormProps = {
+  mode: AuthMode;
+  onSuccess?: (payload: AuthPayload) => void;
+};
+
+const LoginForm: React.FC<LoginFormProps> = ({ mode, onSuccess }) => {
   const isSignup = mode === "signup";
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [agree, setAgree] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // TODO: plug in real auth later
+    if (!email.trim()) return;
+
+    onSuccess?.({
+      email: email.trim(),
+      mode,
+    });
+  };
 
   return (
     <div className="flex h-full flex-col justify-between py-10 px-10 text-[#C6C6C8]">
       {/* Logo placeholder */}
       <div className="mb-10">
-        <img src="public/logo.svg" alt="One." className="h-8 w-8  flex items-center justify-center text-[10px] font-ocr tracking-[0.2em] uppercase text-[#B74735]" />
-        
+        <div className="h-8 w-8 flex items-center justify-center border border-[#B74735] bg-black text-[10px] font-ocr tracking-[0.2em] uppercase text-[#B74735]">
+          one
+        </div>
       </div>
 
       {/* Copy + form */}
@@ -28,11 +54,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ mode = "signup" }) => {
           </p>
         </div>
 
-        <form className="space-y-3 text-[10px] font-ocr">
+        <form className="space-y-3 text-[10px] font-ocr" onSubmit={handleSubmit}>
           <div>
             <input
               type="email"
               placeholder="ENTER YOUR EMAIL"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-[#151515]/80 border border-[#303032] px-3 py-2 outline-none text-[10px] placeholder:text-[#5C5C5E] focus:border-[#B74735] transition tracking-tight uppercase"
             />
           </div>
@@ -41,6 +69,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ mode = "signup" }) => {
             <input
               type="password"
               placeholder={isSignup ? "CREATE A PASSWORD" : "ENTER YOUR PASSWORD"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-[#151515]/80 border border-[#303032] px-3 py-2 outline-none text-[10px] placeholder:text-[#5C5C5E] focus:border-[#B74735] transition tracking-tight uppercase"
             />
           </div>
@@ -49,6 +79,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ mode = "signup" }) => {
             <label className="flex pt-1 items-center gap-2 text-[8px] text-[#8F8F92]">
               <input
                 type="checkbox"
+                checked={agree}
+                onChange={(e) => setAgree(e.target.checked)}
                 className="h-[10px] w-[10px] border border-[#606062] bg-transparent appearance-none checked:bg-[#B74735] checked:border-[#B74735]"
               />
               <span className="leading-tight tracking-tight uppercase">
@@ -64,11 +96,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ mode = "signup" }) => {
             {isSignup ? "Create Account" : "Continue"}
           </button>
 
-          <div className="pb-2 pt-2 text-center text-[8px] font-ocr text-[#8F8F92] uppercase tracking-tight">
-            or sign {isSignup ? "up" : "in"} with
-          </div>
-
-          {/* Social buttons */}
+          {/* Social buttons (non-functional placeholders for now) */}
           <div className="mt-2 grid grid-cols-3 gap-2 text-[10px]">
             <button
               type="button"
@@ -92,7 +120,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ mode = "signup" }) => {
         </form>
       </div>
 
-      {/* Footer link */}
+      {/* Footer link – you can hook this up later if you want mode switching here */}
       <div className="mt-6 text-center text-[10px] text-[#8F8F92] font-ocr uppercase tracking-tight">
         <span>
           {isSignup ? "Already have an account? " : "Don’t have an account yet? "}
