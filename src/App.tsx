@@ -85,7 +85,7 @@ export default function App() {
 function Home() {
   return (
     <div className="flex items-center justify-center h-full py-60">
-      <h1 className="mt-20 text-3xl text-[#C6C6C8]/60">Welcome to One.</h1>
+      <h1 className="mt-20 text-3xl text-[#C6C6C8]/60 font-ocr">Welcome, User 007.</h1>
     </div>
   );
 }
